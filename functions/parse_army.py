@@ -1,5 +1,5 @@
 import re
-from ..models import Army, Regiment, UnitDetails
+from models import Army, Regiment, UnitDetails
 
 def parse_army_list(text: str) -> Army:
     lines = [line.strip() for line in text.split('\n') if line.strip()]
