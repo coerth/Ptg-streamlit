@@ -13,10 +13,6 @@ def select_player_for_army(player_id, player_name):
     st.session_state.selected_player = {'id': player_id, 'name': player_name}
     st.session_state.show_parser = True
 
-st.write("DEBUG: selected_player =", st.session_state.get("selected_player"))
-st.write("DEBUG: view_army =", st.session_state.get("view_army"))
-st.write("DEBUG: show_parser =", st.session_state.get("show_parser"))
-
 if st.session_state.view_army and st.session_state.selected_player:
     render_army_view(st.session_state.selected_player)
 elif st.session_state.show_parser and st.session_state.selected_player:
