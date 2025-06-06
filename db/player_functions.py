@@ -1,29 +1,40 @@
-from pymongo.collection import Collection
-from pydantic import BaseModel, Field
-from typing import Optional
 from models.player import Player
-from models.army import Army
-from db.get_db import get_collection
+from db.get_db import get_collection, add_data_to_collection
+from bson import ObjectId
+from typing import List
 
-def create_player(players_collection: Collection, name: str):
-    new_player = Player(
-        name=name
-    )
-    result = players_collection.insert_one(new_player.dict(by_alias=True))
-    return str(result.inserted_id)
+def create_player(player_data: dict):
+    """
+    Create a new player in the database
+    """
+    collection = get_collection("players")
+    player_id = add_data_to_collection("players", player_data)
+    return player_id
 
-def get_player_by_id(players_collection: Collection, player_id: str) -> Optional[Player]:
-    player_data = players_collection.find_one({"_id": player_id})
+def get_player(player_id):
+    """
+    Get a player by ID
+    """
+    collection = get_collection("players")
+    if isinstance(player_id, str):
+        player_id = ObjectId(player_id)
+    player_data = collection.find_one({"_id": player_id})
     if player_data:
+        # Convert ObjectId to string for Pydantic
+        player_data["_id"] = str(player_data["_id"])
         return Player(**player_data)
     return None
 
-def get_all_players() -> list[Player]:
-    players_collection = get_collection("players")
-    if players_collection is None:
-        return []
-    
+def get_all_players() -> List[Player]:
+    """
+    Get all players
+    """
+    collection = get_collection("players")
     players = []
-    for player_data in players_collection.find():
+    
+    for player_data in collection.find():
+        # Convert ObjectId to string for Pydantic
+        player_data["_id"] = str(player_data["_id"])
         players.append(Player(**player_data))
+    
     return players
