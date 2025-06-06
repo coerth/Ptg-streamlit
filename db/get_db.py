@@ -13,3 +13,8 @@ def add_data_to_collection(collection_name, data):
     collection = db[collection_name]
     result = collection.insert_one(data)
     return result.inserted_id
+
+def get_collection(collection_name):
+    db = connect_to_db()
+    collection = db[collection_name]
+    return collection
