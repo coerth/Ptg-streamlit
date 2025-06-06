@@ -1,8 +1,8 @@
 [theme]
-primaryColor="#d33682"
-backgroundColor="#fdf6e3"
-secondaryBackgroundColor="#eee8d5"
-textColor="#586e75"
+primaryColor="#ff5c8d"  # Vibrant pink
+backgroundColor="#1e1e2e"  # Deep charcoal
+secondaryBackgroundColor="#2d2d3d"  # Slightly lighter charcoal
+textColor="#e0e0e0"  # Off-white text
 font="monospace"
 
 [server]
