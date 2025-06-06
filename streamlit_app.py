@@ -21,7 +21,7 @@ name = st.text_input("Player Name")
 
 if st.button("Create Player"):
     if name:
-        player_id = create_player(players_collection, name)
+        player_id = create_player(name)
         st.success(f"Player created with ID: {player_id}")
     else:
         st.warning("Please fill in all fields.")
