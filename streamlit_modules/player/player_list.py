@@ -26,6 +26,7 @@ def render_player_list(select_player_callback):
             if army:
                 if st.button("View Army", key=f"view_{i}"):
                     st.session_state.view_army = army
+                    st.session_state.selected_player = {'id': player.id, 'name': player.name}
                     st.rerun()
         
         with col3:
