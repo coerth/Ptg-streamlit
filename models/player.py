@@ -3,6 +3,7 @@ from models.army import Army
 from typing import Optional
 from pydantic import ConfigDict
 from models.pyobjectid import PyObjectId
+from bson import ObjectId
 
 class Player(BaseModel):
     # Combined configuration using only model_config
@@ -11,7 +12,7 @@ class Player(BaseModel):
         populate_by_name=True
     )
     
-    id: Optional[PyObjectId] = Field(default=None, alias="_id")
+    id: Optional[ObjectId] = Field(default=None, alias="_id")
     name: Optional[str] = None
     army: Optional[Army] = None
     wins: int = 0
