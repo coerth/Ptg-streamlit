@@ -1,4 +1,4 @@
-from streamlit import page, session_state, session_state as st
+from streamlit import session_state as st
 from db.player_functions import get_all_players
 
 st.widget("title", "The Armies")
