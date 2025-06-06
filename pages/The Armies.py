@@ -9,6 +9,8 @@ if 'selected_player' not in st.session_state:
     st.session_state.selected_player = None
 if 'show_parser' not in st.session_state:
     st.session_state.show_parser = False
+if 'view_army' not in st.session_state:
+    st.session_state.view_army = None
 
 # Function to select player and show parser
 def select_player_for_army(player_id, player_name):
@@ -19,8 +21,55 @@ def select_player_for_army(player_id, player_name):
 st.title("Armies Management")
 st.header("Player Armies")
 
+# Show army details if viewing an army
+if st.session_state.view_army:
+    army = st.session_state.view_army
+    
+    # Back button
+    if st.button("← Back to Player List"):
+        st.session_state.view_army = None
+        st.rerun()
+    
+    # Army details
+    st.header(f"{army.faction}: {army.name}")
+    
+    # Display key stats in columns
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Points", f"{army.points_used}/{army.points_limit}")
+    with col2:
+        st.metric("Drops", army.drops)
+    with col3:
+        if army.spell_lore:
+            st.metric("Spell Lore", army.spell_lore)
+            
+    # Display regiments and units (without nested expanders)
+    st.subheader("Regiments and Units")
+    for regiment in army.regiments:
+        st.markdown(f"### {regiment.name}")
+        for unit in regiment.units:
+            unit_details = []
+            if hasattr(unit, 'is_general') and unit.is_general:
+                unit_details.append("🎖️ General")
+            if hasattr(unit, 'reinforced') and unit.reinforced:
+                unit_details.append("⚔️ Reinforced")
+                
+            details_str = " | ".join(unit_details) if unit_details else ""
+            st.markdown(f"**{unit.name}** ({unit.points}pts) {details_str}")
+            
+            # Show additional unit details if available
+            if hasattr(unit, 'command_traits') and unit.command_traits:
+                st.write(f"Command Traits: {', '.join(unit.command_traits)}")
+            if hasattr(unit, 'artefacts') and unit.artefacts:
+                st.write(f"Artefacts: {', '.join(unit.artefacts)}")
+            if hasattr(unit, 'notes') and unit.notes:
+                for note in unit.notes:
+                    st.write(f"• {note}")
+            
+            st.divider()
+
 # Show army parser if a player is selected
-if st.session_state.show_parser and st.session_state.selected_player:
+elif st.session_state.show_parser and st.session_state.selected_player:
     player = st.session_state.selected_player
     
     st.subheader(f"Update Army for {player['name']}")
@@ -71,20 +120,20 @@ if st.session_state.show_parser and st.session_state.selected_player:
         else:
             st.warning("Please paste an army list to parse.")
         
-# Display player list when not showing parser
 else:
     players = get_all_players()
     if players:
-        for player in players:
+        for i, player in enumerate(players):
             col1, col2, col3 = st.columns([3, 1, 1])
             with col1:
                 st.subheader(f"Player: {player.name}")
                 
                 # Display army info if exists
-                if hasattr(player, 'army_name') and player.army.name:
-                    st.write(f"Army: {player.army.name}")
-                if hasattr(player, 'faction') and player.army.faction:
-                    st.write(f"Faction: {player.army.faction}")
+                if hasattr(player, 'army') and player.army is not None:
+                    if hasattr(player.army, 'name') and player.army.name:
+                        st.write(f"Army: {player.army.name}")
+                    if hasattr(player.army, 'faction') and player.army.faction:
+                        st.write(f"Faction: {player.army.faction}")
                 else:
                     st.write("No army assigned")
             
@@ -92,30 +141,19 @@ else:
                 # View button if player has army
                 army = get_player_army(player.id)
                 if army:
-                    if st.button("View Army", key=f"view_{player.id}"):
-                        # Display army details
-                        with st.expander(f"{army.faction}: {army.name}", expanded=True):
-                            st.write(f"Points: {army.points_used}/{army.points_limit}")
-                            st.write(f"Drops: {army.drops}")
-                            
-                            # Display regiments and units
-                            for regiment in army.regiments:
-                                with st.expander(f"{regiment.name}"):
-                                    for unit in regiment.units:
-                                        unit_details = []
-                                        if hasattr(unit, 'is_general') and unit.is_general:
-                                            unit_details.append("🎖️ General")
-                                        if hasattr(unit, 'reinforced') and unit.reinforced:
-                                            unit_details.append("⚔️ Reinforced")
-                                            
-                                        details_str = " | ".join(unit_details) if unit_details else ""
-                                        st.write(f"**{unit.name}** ({unit.points}pts) {details_str}")
+                    if st.button("View Army", key=f"view_{i}"):
+                        # Store the army in session state instead of displaying immediately
+                        st.session_state.view_army = army
+                        st.rerun()
             
             with col3:
-                label = "Update Army" if hasattr(player, 'army_name') and player.army_name else "Add Army"
-                st.button(label, key=f"update_{player.id}", 
-                          on_click=select_player_for_army, 
-                          args=(player.id, player.name))
+                # Determine if player has an army
+                has_army = hasattr(player, 'army') and player.army is not None
+                label = "Update Army" if has_army else "Add Army"
+                
+                st.button(label, key=f"update_{i}", 
+                        on_click=select_player_for_army, 
+                        args=(player.id, player.name))
                           
             st.divider()
     else:
