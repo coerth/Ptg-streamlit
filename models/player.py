@@ -6,6 +6,7 @@ from typing import Optional
 
 
 class Player(BaseModel):
+    id: Optional[ObjectId] = None
     name: Optional[str] = None
     army: Optional[Army] = None
     wins: int = 0
