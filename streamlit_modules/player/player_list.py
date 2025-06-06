@@ -16,7 +16,7 @@ def render_player_list(select_player_callback):
             st.subheader(f"Player: {player.name}")
             army = getattr(player, 'army', None)
             if army:
-                st.write(f"Army: {army.name}")
+                st.write(f"Army Name: {army.name}")
                 st.write(f"Faction: {army.faction}")
             else:
                 st.write("No army assigned")

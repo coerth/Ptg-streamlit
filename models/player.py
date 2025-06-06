@@ -19,3 +19,4 @@ class Player(BaseModel):
     losses: int = 0
     draws: int = 0
     played: int = 0
+    emderstone_shards: int = 0

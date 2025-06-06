@@ -13,9 +13,10 @@ def select_player_for_army(player_id, player_name):
     st.session_state.selected_player = {'id': player_id, 'name': player_name}
     st.session_state.show_parser = True
 
-if st.session_state.view_army:
+if st.session_state.view_army and st.session_state.selected_player:
     render_army_view(st.session_state.selected_player)
 elif st.session_state.show_parser and st.session_state.selected_player:
     render_army_parser(st.session_state.selected_player)
 else:
     render_player_list(select_player_for_army)
+

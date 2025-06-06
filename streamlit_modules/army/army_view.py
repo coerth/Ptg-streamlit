@@ -4,6 +4,11 @@ from db.army_functions import get_player_army, set_player_army
 from functions import parse_army_list
 
 def render_army_view(player):
+
+    if not player or not isinstance(player, dict) or "name" not in player:
+        st.error("Invalid player data. Please return to the player list.")
+        return
+
     if st.session_state.get("view_army_reload", False) or "view_army" not in st.session_state:
         army = get_player_army(player['id'])
         st.session_state.view_army = army
