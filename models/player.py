@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from models.army import Army
 from typing import Optional
 from pydantic import ConfigDict
@@ -11,7 +11,7 @@ class Player(BaseModel):
         populate_by_name=True
     )
     
-    id: Optional[PyObjectId] = None
+    id: Optional[PyObjectId] = Field(default=None, alias="_id")
     name: Optional[str] = None
     army: Optional[Army] = None
     wins: int = 0

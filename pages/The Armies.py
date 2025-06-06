@@ -81,10 +81,10 @@ else:
                 st.subheader(f"Player: {player.name}")
                 
                 # Display army info if exists
-                if hasattr(player, 'army_name') and player.army_name:
-                    st.write(f"Army: {player.army_name}")
-                if hasattr(player, 'faction') and player.faction:
-                    st.write(f"Faction: {player.faction}")
+                if hasattr(player, 'army_name') and player.army.name:
+                    st.write(f"Army: {player.army.name}")
+                if hasattr(player, 'faction') and player.army.faction:
+                    st.write(f"Faction: {player.army.faction}")
                 else:
                     st.write("No army assigned")
             
