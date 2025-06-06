@@ -29,10 +29,10 @@ class PyObjectId(str):
         return core_schema.union_schema([
             # Handle the case when we get an actual ObjectId
             core_schema.is_instance_schema(ObjectId, 
-                core_schema.string_schema()),
+                core_schema.str_schema()),
             # Handle the case when we get a string representation
             core_schema.chain_schema([
-                core_schema.string_schema(),
+                core_schema.str_schema(),
                 core_schema.no_info_plain_validator_function(cls.validate)
             ])
         ])
