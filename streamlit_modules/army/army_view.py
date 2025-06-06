@@ -4,7 +4,6 @@ from db.army_functions import get_player_army
 
 def render_army_view(player):
     if st.session_state.get("view_army_reload", False) or "view_army" not in st.session_state:
-        
         army = get_player_army(player['id'])
         st.session_state.view_army = army
         st.session_state.view_army_reload = False
@@ -54,9 +53,8 @@ def render_army_view(player):
                         st.write(f"• {note}")
                 st.divider()
     else:
-
         st.header("Update Army List")
-        st.write(f"Overwriting army for player: {player['name']}")
+        st.write(f"Overwriting army")
         
         if st.button("Cancel Update"):
             st.session_state.show_overwrite_form = False
