@@ -68,8 +68,6 @@ else:
             col1, col2 = st.columns([4, 1])
             with col1:
                 st.subheader(f"Player: {player.name}")
-                st.write(f"Faction: {player.faction}")
-                st.write(f"Army: {player.army_name}")
             with col2:
                 st.button("Add Army", key=f"add_army_{player.id}", 
                           on_click=select_player_for_army, 
