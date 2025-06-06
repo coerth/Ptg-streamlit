@@ -23,16 +23,11 @@ class PyObjectId(str):
     @classmethod
     def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: Any) -> core_schema.CoreSchema:
         """
-        This method is used by Pydantic v2 for schema creation.
-        It defines how to convert and validate the ObjectId type.
+        Method for Pydantic v2 schema generation
         """
-        return core_schema.union_schema([
-            # Handle the case when we get an actual ObjectId
-            core_schema.is_instance_schema(ObjectId, 
-                core_schema.str_schema()),
-            # Handle the case when we get a string representation
-            core_schema.chain_schema([
-                core_schema.str_schema(),
-                core_schema.no_info_plain_validator_function(cls.validate)
-            ])
+        return core_schema.chain_schema([
+            # First check if it's a string and validate
+            core_schema.str_schema(),
+            # Then convert and validate with our custom validator
+            core_schema.no_info_plain_validator_function(cls.validate)
         ])
