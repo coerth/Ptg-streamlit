@@ -10,7 +10,7 @@ def create_player(name: str):
     new_player = Player(
         name=name
     )
-    result = players_collection.insert_one(new_player.dict(by_alias=True))
+    result = players_collection.insert_one(new_player.dict())
     return str(result.inserted_id)
 
 def get_player_by_id(players_collection: Collection, player_id: str) -> Optional[Player]:
