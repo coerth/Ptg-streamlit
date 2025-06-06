@@ -15,8 +15,6 @@ def render_army_view(player):
 
     army = st.session_state.view_army
 
-    st.write(player)
-
     col1, col2 = st.columns(2)
     with col1:
         if st.button("← Back to Player List"):
@@ -39,61 +37,79 @@ def render_army_view(player):
 
         st.subheader("Regiments and Units")
 
-        edited = False  # Track if anything was edited
+        with st.form("unit_edit_form"):
+            for reg_idx, regiment in enumerate(army.regiments):
+                st.markdown(f"### {regiment.name}")
+                for unit_idx, unit in enumerate(regiment.units):
+                    with st.expander(f"⚔️ {unit.name} ({unit.points} pts)"):
+                        size = st.number_input(
+                            f"Size ({unit.name})", min_value=1, value=getattr(unit, 'size', 1),
+                            key=f"size_{reg_idx}_{unit_idx}"
+                        )
+                        points = st.number_input(
+                            f"Points ({unit.name})", min_value=0, value=getattr(unit, 'points', 0),
+                            key=f"points_{reg_idx}_{unit_idx}"
+                        )
+                        path = st.text_input(
+                            f"Path ({unit.name})", value=getattr(unit, 'path', ''),
+                            key=f"path_{reg_idx}_{unit_idx}"
+                        )
+                        rank = st.text_input(
+                            f"Rank ({unit.name})", value=getattr(unit, 'rank', ''),
+                            key=f"rank_{reg_idx}_{unit_idx}"
+                        )
+                        battle_wounds = st.number_input(
+                            f"Battle Wounds ({unit.name})", min_value=0,
+                            value=getattr(unit, 'battle_wounds', 0),
+                            key=f"wounds_{reg_idx}_{unit_idx}"
+                        )
+                        reinforced = st.checkbox(
+                            f"Reinforced ({unit.name})", value=getattr(unit, 'reinforced', False),
+                            key=f"reinforced_{reg_idx}_{unit_idx}"
+                        )
 
-        for reg_idx, regiment in enumerate(army.regiments):
-            st.markdown(f"### {regiment.name}")
-            for unit_idx, unit in enumerate(regiment.units):
-                with st.expander(f"⚔️ {unit.name} ({unit.points} pts)"):
-                    size = st.number_input(
-                        f"Size ({unit.name})", min_value=1, value=getattr(unit, 'size', 1),
-                        key=f"size_{reg_idx}_{unit_idx}"
-                    )
-                    path = st.text_input(
-                        f"Path ({unit.name})", value=getattr(unit, 'path', ''),
-                        key=f"path_{reg_idx}_{unit_idx}"
-                    )
-                    rank = st.text_input(
-                        f"Rank ({unit.name})", value=getattr(unit, 'rank', ''),
-                        key=f"rank_{reg_idx}_{unit_idx}"
-                    )
-                    battle_wounds = st.number_input(
-                        f"Battle Wounds ({unit.name})", min_value=0,
-                        value=getattr(unit, 'battle_wounds', 0),
-                        key=f"wounds_{reg_idx}_{unit_idx}"
-                    )
+                        # Store updated values in session state
+                        st.session_state[f"unit_{reg_idx}_{unit_idx}"] = {
+                            "size": size,
+                            "points": points,
+                            "path": path,
+                            "rank": rank,
+                            "battle_wounds": battle_wounds,
+                            "reinforced": reinforced,
+                        }
 
-                    # Update values in memory
-                    if (size != unit.size or path != unit.path or
-                        rank != unit.rank or battle_wounds != unit.battle_wounds):
-                        unit.size = size
-                        unit.path = path
-                        unit.rank = rank
-                        unit.battle_wounds = battle_wounds
-                        edited = True
+                        if getattr(unit, 'battle_scars', []):
+                            st.markdown("**Battle Scars**")
+                            for scar in unit.battle_scars:
+                                st.write(f"• {scar}")
 
-                    if getattr(unit, 'battle_scars', []):
-                        st.markdown("**Battle Scars**")
-                        for scar in unit.battle_scars:
-                            st.write(f"• {scar}")
+                        if getattr(unit, 'command_traits', []):
+                            st.write(f"Command Traits: {', '.join(unit.command_traits)}")
+                        if getattr(unit, 'artefacts', []):
+                            st.write(f"Artefacts: {', '.join(unit.artefacts)}")
+                        if getattr(unit, 'notes', []):
+                            for note in unit.notes:
+                                st.write(f"• {note}")
+                    st.divider()
 
-                    if getattr(unit, 'command_traits', []):
-                        st.write(f"Command Traits: {', '.join(unit.command_traits)}")
-                    if getattr(unit, 'artefacts', []):
-                        st.write(f"Artefacts: {', '.join(unit.artefacts)}")
-                    if getattr(unit, 'notes', []):
-                        for note in unit.notes:
-                            st.write(f"• {note}")
-                st.divider()
+            submitted = st.form_submit_button("💾 Save Unit Changes")
+            if submitted:
+                for reg_idx, regiment in enumerate(army.regiments):
+                    for unit_idx, unit in enumerate(regiment.units):
+                        key = f"unit_{reg_idx}_{unit_idx}"
+                        if key in st.session_state:
+                            values = st.session_state[key]
+                            unit.size = values["size"]
+                            unit.path = values["path"]
+                            unit.rank = values["rank"]
+                            unit.battle_wounds = values["battle_wounds"]
+                            unit.reinforced = values["reinforced"]
 
-        if edited:
-            if st.button("💾 Save Unit Changes"):
                 success = set_player_army(army, player['id'])
                 if success:
                     st.success("Army updated with new unit values!")
                 else:
                     st.error("Failed to update the army.")
-
     else:
         st.header("Update Army List")
         st.write(f"Overwriting army for player: {player['name']}")
