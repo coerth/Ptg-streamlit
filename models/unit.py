@@ -11,3 +11,7 @@ class Unit(BaseModel):
     battle_wounds: Optional[int] = 0
     battle_scars: List[str] = Field(default_factory=list)
     points: Optional[int] = 0
+    notes: Optional[str] = None
+    
+    def __str__(self):
+        return f"{self.name} (Size: {self.size}, Points: {self.points})"
