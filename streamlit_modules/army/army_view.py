@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_modules.army.render_army_parser import parse_and_save_army
+from functions.parse_army import parse_and_save_army
 
 def render_army_view(player):
     # Reload/parse if necessary
