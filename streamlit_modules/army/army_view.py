@@ -100,6 +100,7 @@ def render_army_view(player):
                         if key in st.session_state:
                             values = st.session_state[key]
                             unit.size = values["size"]
+                            unit.points = values["points"]
                             unit.path = values["path"]
                             unit.rank = values["rank"]
                             unit.battle_wounds = values["battle_wounds"]
