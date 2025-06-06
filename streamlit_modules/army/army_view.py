@@ -1,6 +1,7 @@
 import streamlit as st
-from functions.parse_army import parse_and_save_army
-from db.army_functions import get_player_army
+from functions.parse_army import parse_army_list
+from db.army_functions import get_player_army, set_player_army
+from functions import parse_army_list
 
 def render_army_view(player):
     if st.session_state.get("view_army_reload", False) or "view_army" not in st.session_state:
@@ -54,7 +55,7 @@ def render_army_view(player):
                 st.divider()
     else:
         st.header("Update Army List")
-        st.write(f"Overwriting army")
+        st.write(f"Overwriting army for player: {player['name']}")
         
         if st.button("Cancel Update"):
             st.session_state.show_overwrite_form = False
@@ -67,10 +68,23 @@ def render_army_view(player):
                 st.warning("Please paste an army list first.")
             else:
                 try:
-                    parsed_army = parse_and_save_army(player, army_text)
-                    st.session_state.view_army = parsed_army
-                    st.success(f"Army '{parsed_army.name}' saved successfully!")
-                    st.session_state.show_overwrite_form = False
-                    st.rerun()
+
+                    
+                    
+                    parsed_army = parse_army_list(army_text)
+                    
+                    player_id = player['id']
+                    success = set_player_army(parsed_army, player_id)
+                    
+                    if success:
+
+                        st.session_state.view_army = parsed_army
+                        st.success(f"Army '{parsed_army.name}' saved successfully!")
+                        st.session_state.show_overwrite_form = False
+                        st.rerun()
+                    else:
+                        st.error("Failed to save the army")
+                        
                 except Exception as e:
                     st.error(f"Parsing error: {str(e)}")
+                    st.exception(e) 
