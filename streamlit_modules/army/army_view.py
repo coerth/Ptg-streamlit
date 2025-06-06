@@ -12,6 +12,8 @@ def render_army_view(player):
 
     army = st.session_state.view_army
 
+    st.write(player)
+
     col1, col2 = st.columns(2)
     with col1:
         if st.button("← Back to Player List"):
