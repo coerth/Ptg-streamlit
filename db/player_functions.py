@@ -5,10 +5,9 @@ from models.player import Player
 from models.army import Army
 from db.get_db import get_collection
 
-def create_player(players_collection: Collection, name: str, army_name: str, faction: str):
+def create_player(players_collection: Collection, name: str):
     new_player = Player(
-        name=name,
-        army=Army(name=army_name, faction=faction)
+        name=name
     )
     result = players_collection.insert_one(new_player.dict(by_alias=True))
     return str(result.inserted_id)

@@ -1,0 +1,1 @@
+from .parse_army import parse_army_list
