@@ -18,12 +18,10 @@ players_collection = get_collection("players")
 st.title("🛡️ Add New Player")
 
 name = st.text_input("Player Name")
-army_name = st.text_input("Army Name")
-faction = st.text_input("Faction")
 
 if st.button("Create Player"):
-    if name and army_name and faction:
-        player_id = create_player(players_collection, name, army_name, faction)
+    if name:
+        player_id = create_player(players_collection, name)
         st.success(f"Player created with ID: {player_id}")
     else:
         st.warning("Please fill in all fields.")

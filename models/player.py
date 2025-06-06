@@ -13,8 +13,6 @@ class Player(BaseModel):
     
     id: Optional[PyObjectId] = None
     name: Optional[str] = None
-    army_name: Optional[str] = None  # Added this field
-    faction: Optional[str] = None    # Added this field
     army: Optional[Army] = None
     wins: int = 0
     losses: int = 0
