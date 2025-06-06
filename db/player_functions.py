@@ -21,7 +21,7 @@ def get_player_by_id(players_collection: Collection, player_id: str) -> Optional
 
 def get_all_players() -> list[Player]:
     players_collection = get_collection("players")
-    if not players_collection:
+    if players_collection is None:
         return []
     
     players = []
