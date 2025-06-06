@@ -1,5 +1,6 @@
 import re
 from models import Army, Regiment, UnitDetails
+from db.army_functions import set_player_army
 
 def parse_army_list(text: str) -> Army:
     lines = [line.strip() for line in text.split('\n') if line.strip()]
@@ -62,7 +63,7 @@ def parse_army_list(text: str) -> Army:
                 name=unit_name,
                 size=1,  # Default, update if we can parse this
                 path="",  # Would need to be determined separately
-                rank=1,   # Default, update if we can parse this
+                rank=0,   # Default, update if we can parse this
                 abilities=[],
                 enchantments=[],
                 battle_wounds=0,
@@ -95,4 +96,12 @@ def parse_army_list(text: str) -> Army:
     if current_regiment and current_regiment not in army.regiments:
         army.regiments.append(current_regiment)
     
+    return army
+
+def parse_and_save_army(player, army_text):
+    """Parse and save army text for a player. Return army object or raise exception."""
+    army = parse_army_list(army_text)
+    success = set_player_army(army, player['id'])
+    if not success:
+        raise Exception("Failed to save army")
     return army
